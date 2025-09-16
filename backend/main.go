@@ -1,22 +1,26 @@
 package main
 
 import (
-	"fmt"
-	"log"
+	handlers "main/handlers"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// Define una función que maneja las solicitudes a la ruta "/"
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// Escribe una respuesta para el cliente
-		fmt.Fprintf(w, "¡Hola desde el backend de Go!")
+	r := gin.Default()
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Hello, World!",
+		})
 	})
 
-	// Imprime un mensaje en la consola para saber que el servidor está listo
-	fmt.Println("Servidor Go escuchando en el puerto 8080...")
+	authGroup := r.Group("/auth")
+	{
+		authGroup.POST("/login", handlers.Login)
+		authGroup.POST("/logout", handlers.Logout)
+		authGroup.POST("/register", handlers.Register)
+	}
 
-	// Inicia el servidor HTTP y lo mantiene en escucha en el puerto 8080
-	// log.Fatal detendrá el programa si ocurre un error
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	r.Run(":8080")
 }
