@@ -2,8 +2,6 @@ package routes
 
 import (
 	"context"
-	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -23,11 +21,43 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
-	fmt.Printf("Email recibido: %s", req.Email)
-	fmt.Printf("Password recibido: %s", req.Password)
+
+	err := config.ConnectDB()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "No se pudo conectar a la base de datos",
+		})
+		return
+	}
+	defer config.DB.Disconnect(context.TODO())
+
+	user, err := controllers.GetUserByEmail(config.DB, req.Email)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Email incorrecto",
+		})
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Password incorrecto",
+		})
+		return
+	}
+
+	currentUser := models.PublicUser{
+		ID:        user.ID,
+		Email:     user.Email,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		NickName:  user.NickName,
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Login",
+		"user":    currentUser,
 	})
 }
 
@@ -54,13 +84,6 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("\nEmail recibido: %s", req.Email)
-	fmt.Printf("\nPassword recibido: %s", hashedPassword)
-	fmt.Printf("\nFirstName recibido: %s", req.FirstName)
-	fmt.Printf("\nLastName recibido: %s", req.LastName)
-	fmt.Printf("\nNickName recibido: %s", req.NickName)
-	fmt.Printf("\n")
-
 	newUser := models.User{
 		Email:     req.Email,
 		Password:  string(hashedPassword),
@@ -68,17 +91,16 @@ func Register(c *gin.Context) {
 		LastName:  req.LastName,
 		NickName:  req.NickName,
 	}
-	client, err := config.ConnectDB()
+	err = config.ConnectDB()
 	if err != nil {
-		log.Fatal("No se pudo conectar a la base de datos:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "No se pudo conectar a la base de datos",
 		})
 		return
 	}
-	defer client.Disconnect(context.TODO())
+	defer config.DB.Disconnect(context.TODO())
 
-	err = controllers.CreateUser(client, newUser)
+	err = controllers.CreateUser(config.DB, newUser)
 	if err != nil {
 		if err.Error() == "el email ya está registrado" {
 			c.JSON(http.StatusConflict, gin.H{
@@ -92,8 +114,16 @@ func Register(c *gin.Context) {
 		return
 	}
 
+	currentUser := models.PublicUser{
+		ID:        newUser.ID,
+		Email:     newUser.Email,
+		FirstName: newUser.FirstName,
+		LastName:  newUser.LastName,
+		NickName:  newUser.NickName,
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Usuario registrado exitosamente",
-		"user":    newUser,
+		"user":    currentUser,
 	})
 }
