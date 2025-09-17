@@ -11,8 +11,17 @@ import (
 	"main/controllers"
 	"main/models"
 	struts "main/structs"
+	"main/utils"
 )
 
+// Login handles a login request and returns a JWT token for the user.
+// The request must contain a valid email and password.
+// If the email or password are incorrect, a 401 Unauthorized status is returned.
+// If an error occurs while generating the token, a 500 Internal Server Error status is returned.
+// The response contains the user's information and the JWT token.
+// If the request is successful, a 200 OK status is returned.
+//
+// @param c *gin.Context
 func Login(c *gin.Context) {
 	var req struts.LoginRequest
 	if err := c.BindJSON(&req); err != nil {
@@ -55,18 +64,29 @@ func Login(c *gin.Context) {
 		NickName:  user.NickName,
 	}
 
+	tokenString, err := utils.GenerateToken(currentUser)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Error al generar el token",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Login",
 		"user":    currentUser,
+		"token":   tokenString,
 	})
 }
 
-func Logout(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Logout",
-	})
-}
-
+// Register handles a register request and returns a JWT token for the user.
+// The request must contain a valid email, password, first name, last name, and nickname.
+// If the email is already registered, a 409 Conflict status is returned.
+// If an error occurs while generating the token, a 500 Internal Server Error status is returned.
+// The response contains the user's information and the JWT token.
+// If the request is successful, a 200 OK status is returned.
+//
+// @param c *gin.Context
 func Register(c *gin.Context) {
 	var req struts.RegisterRequest
 	if err := c.BindJSON(&req); err != nil {
@@ -122,8 +142,17 @@ func Register(c *gin.Context) {
 		NickName:  newUser.NickName,
 	}
 
+	tokenString, err := utils.GenerateToken(currentUser)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Error al generar el token",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Usuario registrado exitosamente",
 		"user":    currentUser,
+		"token":   tokenString,
 	})
 }
