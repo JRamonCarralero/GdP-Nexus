@@ -1,7 +1,7 @@
 package main
 
 import (
-	handlers "main/handlers"
+	"main/routes"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,9 +17,9 @@ func main() {
 
 	authGroup := r.Group("/auth")
 	{
-		authGroup.POST("/login", handlers.Login)
-		authGroup.POST("/logout", handlers.Logout)
-		authGroup.POST("/register", handlers.Register)
+		authGroup.POST("/login", routes.Login)
+		authGroup.POST("/logout", routes.Logout)
+		authGroup.POST("/register", routes.Register)
 	}
 
 	r.Run(":8080")

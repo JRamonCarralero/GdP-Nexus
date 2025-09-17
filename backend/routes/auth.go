@@ -1,12 +1,17 @@
-package handlers
+package routes
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 
+	"main/config"
+	"main/controllers"
+	"main/models"
 	struts "main/structs"
 )
 
@@ -56,7 +61,39 @@ func Register(c *gin.Context) {
 	fmt.Printf("\nNickName recibido: %s", req.NickName)
 	fmt.Printf("\n")
 
+	newUser := models.User{
+		Email:     req.Email,
+		Password:  string(hashedPassword),
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+		NickName:  req.NickName,
+	}
+	client, err := config.ConnectDB()
+	if err != nil {
+		log.Fatal("No se pudo conectar a la base de datos:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "No se pudo conectar a la base de datos",
+		})
+		return
+	}
+	defer client.Disconnect(context.TODO())
+
+	err = controllers.CreateUser(client, newUser)
+	if err != nil {
+		if err.Error() == "el email ya está registrado" {
+			c.JSON(http.StatusConflict, gin.H{
+				"error": "El email ya está registrado",
+			})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "Error al registrar el usuario",
+			})
+		}
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Register",
+		"message": "Usuario registrado exitosamente",
+		"user":    newUser,
 	})
 }
