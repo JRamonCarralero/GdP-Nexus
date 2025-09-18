@@ -36,7 +36,7 @@ func GenerateToken(user models.PublicUser) (string, error) {
 
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
-		return "", fmt.Errorf("error al firmar el token: %w", err)
+		return "", fmt.Errorf("Error while signing token: %w", err)
 	}
 
 	return tokenString, nil

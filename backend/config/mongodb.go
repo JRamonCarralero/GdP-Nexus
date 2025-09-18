@@ -18,19 +18,18 @@ var DB *mongo.Client
 //
 // @return error
 func ConnectDB() error {
-	fmt.Println(os.Getenv("DB_URI"))
 	clientOptions := options.Client().ApplyURI(os.Getenv("DB_URI"))
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
-		return fmt.Errorf("error al conectar a MongoDB: %w", err)
+		return fmt.Errorf("Error connecting to MongoDB: %w", err)
 	}
 
 	err = client.Ping(context.TODO(), nil)
 	if err != nil {
-		return fmt.Errorf("error al hacer ping a MongoDB: %w", err)
+		return fmt.Errorf("Error pinging MongoDB: %w", err)
 	}
 
-	fmt.Println("Conexión a MongoDB exitosa!")
+	fmt.Println("MongoDB connected!")
 
 	DB = client
 	return nil

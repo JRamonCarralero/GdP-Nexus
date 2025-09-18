@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -31,27 +30,17 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	err := config.ConnectDB()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "No se pudo conectar a la base de datos",
-		})
-		return
-	}
-	defer config.DB.Disconnect(context.TODO())
-
 	user, err := controllers.GetUserByEmail(config.DB, req.Email)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": "Email incorrecto",
+			"error": "Credenciales incorrectas",
 		})
 		return
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
-	if err != nil {
+	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": "Password incorrecto",
+			"error": "Credenciales incorrectas",
 		})
 		return
 	}
@@ -111,18 +100,10 @@ func Register(c *gin.Context) {
 		LastName:  req.LastName,
 		NickName:  req.NickName,
 	}
-	err = config.ConnectDB()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "No se pudo conectar a la base de datos",
-		})
-		return
-	}
-	defer config.DB.Disconnect(context.TODO())
 
 	err = controllers.CreateUser(config.DB, newUser)
 	if err != nil {
-		if err.Error() == "el email ya está registrado" {
+		if err.Error() == "Email is already registered" {
 			c.JSON(http.StatusConflict, gin.H{
 				"error": "El email ya está registrado",
 			})
@@ -151,7 +132,7 @@ func Register(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Usuario registrado exitosamente",
+		"message": "Usuario registrado",
 		"user":    currentUser,
 		"token":   tokenString,
 	})
