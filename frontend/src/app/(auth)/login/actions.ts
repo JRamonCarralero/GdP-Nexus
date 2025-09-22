@@ -16,6 +16,25 @@ export async function login(state: FormState, formData: FormData) {
   // Simula un retardo
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
+  try {
+    const response = await fetch('http://localhost:8080/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Login failed');
+    }
+
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    return { message: 'Login failed' };
+  }
+
   // Devuelve un objeto del mismo tipo que FormState
   return { message: 'Login successful!' };
 }
