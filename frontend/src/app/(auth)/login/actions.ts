@@ -5,6 +5,10 @@ export type FormState = {
   message: string;
 };
 
+export type AccessToken = {
+  token: string
+};
+
 // La función login ahora recibe el estado anterior y el formData
 // Asegúrate de que los tipos coincidan
 export async function login(state: FormState, formData: FormData) {
@@ -29,7 +33,7 @@ export async function login(state: FormState, formData: FormData) {
       throw new Error('Login failed');
     }
 
-    const data = await response.json();
+    const data: AccessToken = await response.json();
     console.log(data);
   } catch (error) {
     return { message: 'Login failed' };
