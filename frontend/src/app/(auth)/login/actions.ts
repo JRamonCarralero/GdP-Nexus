@@ -1,5 +1,7 @@
 'use server';
 
+import { redirect } from "next/navigation";
+
 export type FormState = {
   message: string;
 };
@@ -27,6 +29,7 @@ export async function login(state: FormState, formData: FormData) {
 
     const data: AccessToken = await response.json();
     console.log(data);
+    redirect('/dashboard');
   } catch (error) {
     return { message: 'Login failed' };
   }
