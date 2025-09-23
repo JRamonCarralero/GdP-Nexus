@@ -130,8 +130,6 @@ func Register(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Usuario registrado",
-		"user":    currentUser,
-		"token":   tokenString,
+		"token": tokenString,
 	})
 }
