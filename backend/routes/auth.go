@@ -9,7 +9,7 @@ import (
 	"main/config"
 	"main/controllers"
 	"main/models"
-	struts "main/structs"
+	"main/structs"
 	"main/utils"
 )
 
@@ -22,7 +22,7 @@ import (
 //
 // @param c *gin.Context
 func Login(c *gin.Context) {
-	var req struts.LoginRequest
+	var req structs.LoginRequest
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -75,7 +75,7 @@ func Login(c *gin.Context) {
 //
 // @param c *gin.Context
 func Register(c *gin.Context) {
-	var req struts.RegisterRequest
+	var req structs.RegisterRequest
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
