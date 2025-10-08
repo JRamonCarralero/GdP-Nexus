@@ -29,12 +29,12 @@ func CreateUser(client *mongo.Client, user models.User) error {
 	filter := bson.M{"email": user.Email}
 	err := collection.FindOne(context.TODO(), filter).Decode(&existingUser)
 	if err == nil {
-		return fmt.Errorf("Email is already registered")
+		return fmt.Errorf("email is already registered")
 	}
 
 	_, err = collection.InsertOne(context.TODO(), user)
 	if err != nil {
-		return fmt.Errorf("Error inserting user: %w", err)
+		return fmt.Errorf("error inserting user: %w", err)
 	}
 	return nil
 }

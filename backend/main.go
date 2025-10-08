@@ -39,5 +39,23 @@ func main() {
 		authGroup.POST("/register", routes.Register)
 	}
 
+	projectGroup := r.Group("/projects")
+	{
+		projectGroup.GET("/", routes.GetProjects)
+		projectGroup.GET("/:id", routes.GetProject)
+		projectGroup.POST("/", routes.CreateProject)
+		projectGroup.PUT("/:id", routes.UpdateProject)
+		projectGroup.DELETE("/:id", routes.DeleteProject)
+	}
+
+	taskGroup := r.Group("/tasks")
+	{
+		taskGroup.GET("/", routes.GetTasks)
+		taskGroup.GET("/:id", routes.GetTask)
+		taskGroup.POST("/", routes.CreateTask)
+		taskGroup.PUT("/:id", routes.UpdateTask)
+		taskGroup.DELETE("/:id", routes.DeleteTask)
+	}
+
 	r.Run(":8080")
 }

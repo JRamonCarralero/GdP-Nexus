@@ -9,6 +9,7 @@ import (
 	"main/structs"
 
 	"github.com/golang-jwt/jwt/v5"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var jwtKey = []byte(os.Getenv("JWT_SECRET"))
@@ -36,8 +37,17 @@ func GenerateToken(user models.PublicUser) (string, error) {
 
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
-		return "", fmt.Errorf("Error while signing token: %w", err)
+		return "", fmt.Errorf("error while signing token: %w", err)
 	}
 
 	return tokenString, nil
+}
+
+func StringAObjectID(idStr string) (primitive.ObjectID, error) {
+	objID, err := primitive.ObjectIDFromHex(idStr)
+	if err != nil {
+		return primitive.NilObjectID, fmt.Errorf("el string de ID no es válido: %w", err)
+	}
+
+	return objID, nil
 }
