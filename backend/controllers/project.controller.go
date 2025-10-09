@@ -6,10 +6,10 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"main/models"
+	"main/types"
 )
 
-func CreateProject(client *mongo.Client, project models.Project) (string, error) {
+func CreateProject(client *mongo.Client, project types.ProjectRequest) (string, error) {
 	collection := client.Database("gdp-nexus").Collection("projects")
 
 	newProject, err := collection.InsertOne(context.TODO(), project)
