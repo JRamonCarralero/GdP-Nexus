@@ -10,7 +10,15 @@ import (
 )
 
 func GetProjects(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "Hello, World!"})
+	products, err := controllers.GetProjects(config.DB)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, products)
 }
 
 func GetProject(c *gin.Context) {
@@ -34,13 +42,56 @@ func CreateProject(c *gin.Context) {
 		return
 	}
 
+	_, err = controllers.CreateNumberTaskIssue(config.DB, projectId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
 	c.JSON(http.StatusCreated, gin.H{"projectId": projectId})
 }
 
 func UpdateProject(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "Hello, World!"})
+	var req types.ProjectUpdateRequest
+	projectId := c.Param("id")
+
+	if projectId == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Project ID is required",
+		})
+		return
+	}
+
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	err := controllers.UpdateProject(config.DB, projectId, req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Project updated successfully!"})
 }
 
 func DeleteProject(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "Hello, World!"})
+	projectId := c.Param("id")
+
+	err := controllers.DeleteProject(config.DB, projectId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Project deleted successfully!"})
 }

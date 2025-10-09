@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"main/models"
-	"main/structs"
+	"main/types"
 
 	"github.com/golang-jwt/jwt/v5"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -24,7 +24,7 @@ var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 func GenerateToken(user models.PublicUser) (string, error) {
 	expirationTime := time.Now().Add(2 * time.Hour)
 
-	claims := &structs.UserClaims{
+	claims := &types.UserClaims{
 		PublicUser: user,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
