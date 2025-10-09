@@ -10,9 +10,11 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// @title Nexus API
+// @title GdP Nexus API
 // @version 1.0
-// @description API for Nexus Project
+// @description API for the GdP Nexus project
+// @host localhost:8080
+// @BasePath /
 func main() {
 	err := godotenv.Load()
 	if err != nil {

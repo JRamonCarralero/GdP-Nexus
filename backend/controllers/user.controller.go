@@ -18,10 +18,6 @@ import (
 // If the email is already registered, a 409 Conflict error is returned.
 // If an error occurs while inserting the user, a 500 Internal Server Error
 // is returned.
-//
-// @param client *mongo.Client
-// @param user models.User
-// @return error
 func CreateUser(client *mongo.Client, user models.User) error {
 	collection := client.Database("gdp-nexus").Collection("users")
 
@@ -46,10 +42,6 @@ func CreateUser(client *mongo.Client, user models.User) error {
 //
 // If the email does not exist, a nil models.User and a nil error are returned.
 // If an error occurs while getting the user, the error is returned.
-//
-// @param client *mongo.Client
-// @param email string
-// @return models.User, error
 func GetUserByEmail(client *mongo.Client, email string) (models.User, error) {
 	collection := client.Database("gdp-nexus").Collection("users")
 

@@ -13,14 +13,17 @@ import (
 	"main/utils"
 )
 
-// Login handles a login request and returns a JWT token for the user.
-// The request must contain a valid email and password.
-// If the email or password are incorrect, a 401 Unauthorized status is returned.
-// If an error occurs while generating the token, a 500 Internal Server Error status is returned.
-// The response contains the user's information and the JWT token.
-// If the request is successful, a 200 OK status is returned.
-//
-// @param c *gin.Context
+// @Summary Login a user
+// @Description Logs in a user and returns a JWT token
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param request body types.LoginRequest true "Login request"
+// @Success 200 {object} object "Return JWT token"
+// @Failure 400 {object} object "Bad request"
+// @Failure 401 {object} object "Invalid credentials"
+// @Failure 500 {object} object "Internal server error"
+// @Router /login [post]
 func Login(c *gin.Context) {
 	var req types.LoginRequest
 	if err := c.BindJSON(&req); err != nil {
@@ -66,14 +69,17 @@ func Login(c *gin.Context) {
 	})
 }
 
-// Register handles a register request and returns a JWT token for the user.
-// The request must contain a valid email, password, first name, last name, and nickname.
-// If the email is already registered, a 409 Conflict status is returned.
-// If an error occurs while generating the token, a 500 Internal Server Error status is returned.
-// The response contains the user's information and the JWT token.
-// If the request is successful, a 200 OK status is returned.
-//
-// @param c *gin.Context
+// @Summary Register a user
+// @Description Registers a new user and returns a JWT token
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param request body types.RegisterRequest true "Register request"
+// @Success 201 {object} object "Return JWT token"
+// @Failure 400 {object} object "Bad request"
+// @Failure 409 {object} object "Email already registered"
+// @Failure 500 {object} object "Internal server error"
+// @Router /register [post]
 func Register(c *gin.Context) {
 	var req types.RegisterRequest
 	if err := c.BindJSON(&req); err != nil {

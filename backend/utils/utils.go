@@ -18,9 +18,6 @@ var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 // The token is signed with the HS256 algorithm and contains the user's information.
 // The token is valid for 2 hours from the moment it is generated.
 // If an error occurs while generating the token, it is returned as the second argument.
-//
-// @param user models.PublicUser
-// @return string, error
 func GenerateToken(user models.PublicUser) (string, error) {
 	expirationTime := time.Now().Add(2 * time.Hour)
 
@@ -43,6 +40,10 @@ func GenerateToken(user models.PublicUser) (string, error) {
 	return tokenString, nil
 }
 
+// StringAObjectID converts a string representation of an ObjectId to an actual ObjectId.
+// If the string is not a valid ObjectId, an error is returned.
+// The error message will include the original error message from the ObjectIdFromHex function.
+// The returned ObjectId will be primitive.NilObjectID if an error occurs.
 func StringAObjectID(idStr string) (primitive.ObjectID, error) {
 	objID, err := primitive.ObjectIDFromHex(idStr)
 	if err != nil {

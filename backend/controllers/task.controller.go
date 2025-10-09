@@ -14,6 +14,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// CreateNumberTaskIssue creates a new next task number document in the database.
+//
+// The function takes a pointer to a mongo client and a project id as parameters and returns the new task number as a string and an error if something goes wrong.
+//
+// If an error occurs while inserting the next task number, a 500 Internal Server Error is returned.
 func CreateNumberTaskIssue(client *mongo.Client, projectId string) (string, error) {
 	collection := client.Database("gdp-nexus").Collection("nextTaskNumber")
 
@@ -30,6 +35,11 @@ func CreateNumberTaskIssue(client *mongo.Client, projectId string) (string, erro
 	return newNumber.InsertedID.(string), nil
 }
 
+// GetNextTaskNumber gets the next task number for a given project from the database.
+//
+// The function takes a pointer to a mongo client and a project id as parameters and returns the next task number as an int and an error if something goes wrong.
+//
+// If an error occurs while getting the next task number, a 500 Internal Server Error is returned.
 func GetNextTaskNumber(client *mongo.Client, projectId string) (int, error) {
 	collection := client.Database("gdp-nexus").Collection("nextTaskNumber")
 
@@ -62,6 +72,17 @@ func GetNextTaskNumber(client *mongo.Client, projectId string) (int, error) {
 	return result.Number, nil
 }
 
+// CreateTask creates a new task in the database.
+//
+// The function takes a pointer to a mongo client and a models.TaskRequest
+// as parameters and returns the new task id as a string and an error if
+// something goes wrong.
+//
+// If an error occurs while getting the next task number, a 500 Internal
+// Server Error is returned.
+//
+// If an error occurs while inserting the task, a 500 Internal Server Error
+// is returned.
 func CreateTask(client *mongo.Client, task types.TaskRequest) (string, error) {
 	collection := client.Database("gdp-nexus").Collection("tasks")
 
@@ -101,6 +122,13 @@ func CreateTask(client *mongo.Client, task types.TaskRequest) (string, error) {
 	return resultTask.InsertedID.(string), nil
 }
 
+// GetTasks gets all tasks for a given project from the database.
+//
+// The function takes a pointer to a mongo client and a project id as parameters and returns a slice of models.Task and an error if something goes wrong.
+//
+// If an error occurs while finding the tasks, a 500 Internal Server Error is returned.
+//
+// If an error occurs while decoding the tasks, a 500 Internal Server Error is returned.
 func GetTasks(client *mongo.Client, projectId string) ([]models.Task, error) {
 	collection := client.Database("gdp-nexus").Collection("tasks")
 
@@ -118,6 +146,13 @@ func GetTasks(client *mongo.Client, projectId string) ([]models.Task, error) {
 	return tasks, nil
 }
 
+// GetTaskById gets a task from the database by its ID.
+//
+// The function takes a pointer to a mongo client and a task ID as parameters and returns a models.Task and an error if something goes wrong.
+//
+// If an error occurs while finding the task, a 500 Internal Server Error is returned.
+//
+// If an error occurs while decoding the task, a 500 Internal Server Error is returned.
 func GetTaskById(client *mongo.Client, id string) (models.Task, error) {
 	collection := client.Database("gdp-nexus").Collection("tasks")
 
@@ -135,6 +170,11 @@ func GetTaskById(client *mongo.Client, id string) (models.Task, error) {
 	return task, nil
 }
 
+// UpdateTask updates a task by ID.
+//
+// The function takes a pointer to a mongo client, a task ID, and a types.TaskUpdateRequest as parameters and returns an error if something goes wrong.
+//
+// If an error occurs while updating the task, a 500 Internal Server Error is returned.
 func UpdateTask(client *mongo.Client, id string, task types.TaskUpdateRequest) error {
 	collection := client.Database("gdp-nexus").Collection("tasks")
 
@@ -170,6 +210,11 @@ func UpdateTask(client *mongo.Client, id string, task types.TaskUpdateRequest) e
 	return nil
 }
 
+// DeleteTask deletes a task by ID.
+//
+// The function takes a pointer to a mongo client and a task ID as parameters and returns an error if something goes wrong.
+//
+// If an error occurs while deleting the task, a 500 Internal Server Error is returned.
 func DeleteTask(client *mongo.Client, id string) error {
 	collection := client.Database("gdp-nexus").Collection("tasks")
 

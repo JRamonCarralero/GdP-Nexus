@@ -14,6 +14,17 @@ import (
 	"main/utils"
 )
 
+// CreateProject creates a new project in the database.
+//
+// The function takes a pointer to a mongo client and a models.ProjectRequest
+// as parameters and returns the new project id as a string and an error if
+// something goes wrong.
+//
+// If an error occurs while getting the owner id, a 500 Internal Server
+// Error is returned.
+//
+// If an error occurs while inserting the project, a 500 Internal Server
+// Error is returned.
 func CreateProject(client *mongo.Client, project types.ProjectRequest) (string, error) {
 	collection := client.Database("gdp-nexus").Collection("projects")
 
@@ -48,6 +59,13 @@ func CreateProject(client *mongo.Client, project types.ProjectRequest) (string, 
 	return nProject.InsertedID.(string), nil
 }
 
+// GetProjects gets all projects from the database.
+//
+// The function takes a pointer to a mongo client as a parameter and returns a slice of models.Project and an error if something goes wrong.
+//
+// If an error occurs while finding the projects, a 500 Internal Server Error is returned.
+//
+// If an error occurs while decoding the projects, a 500 Internal Server Error is returned.
 func GetProjects(client *mongo.Client) ([]models.Project, error) {
 	collection := client.Database("gdp-nexus").Collection("projects")
 
@@ -65,6 +83,13 @@ func GetProjects(client *mongo.Client) ([]models.Project, error) {
 	return projects, nil
 }
 
+// GetProjectById gets a project from the database by its ID.
+//
+// The function takes a pointer to a mongo client and a project ID as parameters and returns a models.Project and an error if something goes wrong.
+//
+// If an error occurs while finding the project, a 500 Internal Server Error is returned.
+//
+// If an error occurs while decoding the project, a 500 Internal Server Error is returned.
 func GetProjectById(client *mongo.Client, id string) (models.Project, error) {
 	collection := client.Database("gdp-nexus").Collection("projects")
 
@@ -77,6 +102,11 @@ func GetProjectById(client *mongo.Client, id string) (models.Project, error) {
 	return project, nil
 }
 
+// UpdateProject updates a project by ID.
+//
+// The function takes a pointer to a mongo client, a project ID, and a types.ProjectUpdateRequest as parameters and returns an error if something goes wrong.
+//
+// If an error occurs while updating the project, a 500 Internal Server Error is returned.
 func UpdateProject(client *mongo.Client, id string, project types.ProjectUpdateRequest) error {
 	collection := client.Database("gdp-nexus").Collection("projects")
 
@@ -121,6 +151,11 @@ func UpdateProject(client *mongo.Client, id string, project types.ProjectUpdateR
 	return nil
 }
 
+// DeleteProject deletes a project by ID.
+//
+// The function takes a pointer to a mongo client and a project ID as parameters and returns an error if something goes wrong.
+//
+// If an error occurs while deleting the project, a 500 Internal Server Error is returned.
 func DeleteProject(client *mongo.Client, id string) error {
 	collection := client.Database("gdp-nexus").Collection("projects")
 
