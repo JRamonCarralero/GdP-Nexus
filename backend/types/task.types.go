@@ -13,4 +13,5 @@ type TaskUpdateRequest struct {
 	Name        *string `json:"name,omitempty"`
 	Description *string `json:"description,omitempty"`
 	Assignee    *string `json:"assignee,omitempty"`
+	State       *string `json:"state,omitempty"`
 }

@@ -107,6 +107,7 @@ func CreateTask(client *mongo.Client, task types.TaskRequest) (string, error) {
 		ID:          primitive.NewObjectID(),
 		Name:        task.Name,
 		Description: task.Description,
+		State:       "todo",
 		Project:     projectId,
 		Assignee:    assignee,
 		Number:      taskNumber,
@@ -200,6 +201,9 @@ func UpdateTask(client *mongo.Client, id string, task types.TaskUpdateRequest) e
 		}
 
 		updateDoc["assignee"] = assignee
+	}
+	if task.State != nil {
+		updateDoc["state"] = *task.State
 	}
 
 	_, err = collection.UpdateOne(context.TODO(), bson.M{"_id": tid}, bson.M{"$set": updateDoc})
