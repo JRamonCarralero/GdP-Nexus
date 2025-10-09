@@ -1,31 +1,13 @@
-package main
+package api
 
 import (
-	"context"
-	"log"
+	"main/routes"
 	"net/http"
 
-	"main/config"
-	"main/routes"
-
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 )
 
-// @title Nexus API
-// @version 1.0
-// @description API for Nexus Project
-func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("Error: .env file not found")
-	}
-
-	if err := config.ConnectDB(); err != nil {
-		log.Fatalf("Fatal error connecting to database: %v", err)
-	}
-	defer config.DB.Disconnect(context.TODO())
-
+func RunAPIServer() error {
 	r := gin.Default()
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
@@ -58,4 +40,6 @@ func main() {
 	}
 
 	r.Run(":8080")
+
+	return nil
 }
