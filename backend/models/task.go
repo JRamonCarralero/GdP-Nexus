@@ -10,6 +10,7 @@ type Task struct {
 	Description string             `json:"description" bson:"description"`
 	Project     primitive.ObjectID `json:"project" bson:"project"`
 	Assignee    primitive.ObjectID `json:"assignee" bson:"assignee"`
+	Number      int                `json:"number" bson:"number"`
 	CreatedAt   string             `json:"created_at" bson:"created_at"`
 	CreatedBy   primitive.ObjectID `json:"created_by" bson:"created_by"`
 }

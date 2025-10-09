@@ -3,8 +3,10 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"main/models"
@@ -15,12 +17,35 @@ import (
 func CreateProject(client *mongo.Client, project types.ProjectRequest) (string, error) {
 	collection := client.Database("gdp-nexus").Collection("projects")
 
-	newProject, err := collection.InsertOne(context.TODO(), project)
+	ownerId, err := utils.StringAObjectID(project.Owner)
+	if err != nil {
+		return "", err
+	}
+
+	membersIds := make([]primitive.ObjectID, len(project.Members))
+	for i, memberId := range project.Members {
+		membersIds[i], err = utils.StringAObjectID(memberId)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	newProject := models.Project{
+		ID:          primitive.NewObjectID(),
+		Name:        project.Name,
+		Description: project.Description,
+		Owner:       ownerId,
+		Members:     membersIds,
+		CreatedAt:   time.Now().Format("2006-01-02 15:04:05"),
+		CreatedBy:   ownerId,
+	}
+
+	nProject, err := collection.InsertOne(context.TODO(), newProject)
 	if err != nil {
 		return "", fmt.Errorf("error inserting project: %w", err)
 	}
 
-	return newProject.InsertedID.(string), nil
+	return nProject.InsertedID.(string), nil
 }
 
 func GetProjects(client *mongo.Client) ([]models.Project, error) {
@@ -60,7 +85,35 @@ func UpdateProject(client *mongo.Client, id string, project types.ProjectUpdateR
 		return err
 	}
 
-	_, err = collection.UpdateOne(context.TODO(), bson.M{"_id": pid}, bson.M{"$set": project})
+	updateDoc := bson.M{}
+
+	if project.Name != nil {
+		updateDoc["name"] = *project.Name
+	}
+	if project.Description != nil {
+		updateDoc["description"] = *project.Description
+	}
+	if project.Owner != nil {
+		ownerStr := *project.Owner
+		owner, err := utils.StringAObjectID(ownerStr)
+		if err != nil {
+			return err
+		}
+
+		updateDoc["owner"] = owner
+	}
+	if project.Members != nil {
+		membersIds := make([]primitive.ObjectID, len(*project.Members))
+		for i, memberId := range *project.Members {
+			membersIds[i], err = utils.StringAObjectID(memberId)
+			if err != nil {
+				return err
+			}
+		}
+		updateDoc["members"] = membersIds
+	}
+
+	_, err = collection.UpdateOne(context.TODO(), bson.M{"_id": pid}, bson.M{"$set": updateDoc})
 	if err != nil {
 		return fmt.Errorf("error updating project: %w", err)
 	}
