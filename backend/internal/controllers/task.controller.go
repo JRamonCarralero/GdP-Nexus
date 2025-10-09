@@ -3,7 +3,7 @@ package controllers
 import (
 	"context"
 	"fmt"
-	"main/models"
+	"main/internal/models"
 	"main/types"
 	"main/utils"
 	"time"

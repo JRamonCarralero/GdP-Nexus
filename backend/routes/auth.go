@@ -6,9 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 
-	"main/config"
-	"main/controllers"
-	"main/models"
+	"main/internal/config"
+	"main/internal/controllers"
+	"main/internal/models"
 	"main/types"
 	"main/utils"
 )

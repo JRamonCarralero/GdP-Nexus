@@ -1,7 +1,7 @@
 package types
 
 import (
-	"main/models"
+	"main/internal/models"
 
 	"github.com/golang-jwt/jwt/v5"
 )

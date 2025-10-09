@@ -11,8 +11,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"main/controllers"
-	"main/models"
+	"main/internal/controllers"
+	"main/internal/models"
 )
 
 var testClient *mongo.Client

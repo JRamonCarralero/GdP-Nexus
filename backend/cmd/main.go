@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"main/cmd/api"
-	"main/config"
+	"main/internal/config"
 
 	"github.com/joho/godotenv"
 )

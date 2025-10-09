@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"main/models"
+	"main/internal/models"
 	"main/types"
 
 	"github.com/golang-jwt/jwt/v5"

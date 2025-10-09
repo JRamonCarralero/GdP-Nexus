@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"main/config"
-	"main/controllers"
+	"main/internal/config"
+	"main/internal/controllers"
 	"main/types"
 	"net/http"
 
